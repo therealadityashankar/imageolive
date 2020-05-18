@@ -18,4 +18,4 @@ async function dog(){
 }
 ```
 
-NOTE: the image must be relative to the html document, NOT the file
+NOTE: the image must be relative to the html document, NOT the js file
