@@ -17,3 +17,5 @@ async function dog(){
   dogpic.setOriginalOnCanvas(canvas)
 }
 ```
+
+NOTE: the image must be relative to the html document, NOT the file
