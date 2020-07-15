@@ -1,8 +1,8 @@
 <script type="module">
-  import createImageOlive from "../imageOlive.mjs"
+  import ImageOlive from "../imageOlive.js"
 
   async function doSomething(){
-    const dog = await createImageOlive("./images/dog.jpg", import.meta.url)
+    const dog = await ImageOlive.create("./images/dog.jpg", import.meta.url)
     const canvas = document.getElementById("canvas")
     const ctx = canvas.getContext("2d")
     ctx.scale(0.3, 0.3)

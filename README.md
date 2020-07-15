@@ -9,13 +9,15 @@ Then you've come to the right spot !
 ### short example
 
 ```js
-import createImageOlive from "https://cdn.jsdelivr.net/gh/therealadityashankar/imageolive@0.0.1/imageOlive.mjs"
+import ImageOlive from "https://cdn.jsdelivr.net/gh/therealadityashankar/imageolive@0.0.3/imageOlive.mjs";
 
 async function dog(){
-  const dogpic = await createImageOlive("./images/woofer.png", import.meta.url)
+  const dogpic = await ImageOlive.create("./images/woofer.png", import.meta.url)
   const canvas = document.getElementById("canvas")
   dogpic.setOriginal(canvas)
-}
+};
+
+dog()
 ```
 
 NOTE: the image must be relative to the html document, NOT the js file if you don't add the "import.meta" parameter,
