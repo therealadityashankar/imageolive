@@ -3,13 +3,19 @@
 
   async function doSomething(){
     const dog = await ImageOlive.create("./images/dog.jpg", import.meta.url)
-    const canvas = document.getElementById("canvas")
-    const ctx = canvas.getContext("2d")
-    ctx.scale(0.3, 0.3)
-    dog.drawOriginal(ctx, 0, 0)
-    ctx.resetTransform()
+    dog.scale(0.3, 0.3).draw("#canvas", 0, 0)
+
+    const canvas2 = document.getElementById("canvas2")
+    dog.resize(800, 500).draw(canvas2, 0, 0)
+
+    const canvas3 = document.getElementById("canvas3")
+    const smallDog = dog.scale(0.3, 0.3)
+
+    smallDog.draw(canvas3.getContext("2d"), 20, 20, "bottom-center")
   }
 
   doSomething()
 </script>
 <canvas id="canvas" width="800" height="500"></canvas>
+<canvas id="canvas2" width="800" height="500"></canvas>
+<canvas id="canvas3" width="800" height="500"></canvas>

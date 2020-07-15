@@ -11,12 +11,16 @@ class ImageOlive {
     this.width = 0
     this.height = 0
     this.src = ""
+
+    /**
+     * see ImageOlive.draw function for details
+     */
+    this.drawMode = "top-left"
   }
 
   /**
-  * extra stuff required to initialize properly, this must be called immedietly after the constructor
-  *
-  * mostly that you can add it syncronously, instead of putting
+  * constructor instead of the default constructor because of the need for
+  * an async constructor
   * @param {string} src source/url of the image
   * @param {string} callingUrl the base url (generally import.meta.url)
   */
@@ -100,39 +104,76 @@ class ImageOlive {
   }
 
   /**
-  * set the original image on the canvas, while resetting its size
-  * internally uses ctx.drawImage(this.image, 0, 0)
-  *
-  * @param canvas - the canvas to put the image in
-  */
-  setOriginal (canvas) {
-    canvas.width = this.width
-    canvas.height = this.height
-    const ctx = canvas.getContext('2d')
-    this.drawOriginal(ctx, 0, 0)
+   * draw the image on a canvas context
+   *
+   * further note:
+   * check out ImageOlive.drawMode, this supports multiple options
+   *
+   * "center" (or "center-center")
+   * "top-left" [default]
+   * "top-right"
+   * "bottom-left"
+   * "bottom-right"
+   * "center-left"
+   * "center-right"
+   * "top-center"
+   * "bottom-center"
+   *
+   * basically defines (x, y) corrospond to what of the image
+   *
+   * so say you choose top-right, then the top-right of the image is where x, y will lie
+   *
+   * @param canvasOrCtx - the canvas or canvas context or query selector string of the canvas to draw the image on
+   * @param {number} x - the x co-ordinate corrosponding to the drawMode
+   * @param {number} y - the y co-ordinate corrosponding to the drawMode
+   * @param {string} [drawMode] - this overrides the ImageOlive.drawMode parameter
+   */
+  draw(canvasOrCtx, x=0, y=0, drawMode){
+    const ctx = ImageOlive.getContextFromCanvasOrContext(canvasOrCtx);
+    [x, y] = ImageOlive.getTopLeftCoords(x, y, this.width, this.height, drawMode||this.drawMode)
+    ctx.drawImage(this.canvas, x, y)
   }
 
-  /**
-  * draw the original image in a context
-  * internally uses ctx.drawImage(this.image, ...params)
-  *
-  * @param {CanvasRenderingContext2D} ctx - the context to put the image in
-  * @param {...params} params - all parameters for ctx.drawImage(...)
-  */
-  drawOriginal (ctx, ...params) {
-    ctx.drawImage(this.image, ...params)
-  }
 
   /**
-  * put the image data in a CanvasRenderingContext2D
-  * internally uses ctx.putImageData(this.imageData, ...params)
-  *
-  * @param {CanvasRenderingContext2D} ctx - the context to put the image in
-  * @param {...params} params - all parameters for ctx.putImageData(...)
-  */
-  putImageData (ctx, ...params) {
-    ctx.putImageData(this.imageData, ...params)
+   * if fed a canvas, returns its context, if fed a context, returns the context
+   * @param canvasOrCtx - the canvas or canvas context or query selector string of the canvas
+   */
+  static getContextFromCanvasOrContext(canvasOrCtx){
+    if(typeof canvasOrCtx === "string") {
+      return document.querySelector(canvasOrCtx).getContext("2d")
+    }
+    else if(canvasOrCtx instanceof CanvasRenderingContext2D){
+      return canvasOrCtx
+    } else {
+      return canvasOrCtx.getContext("2d")
+    }
   }
+
+
+  /**
+   * gets the top-left coords for x, y given the drawMode
+   * see the ImageOlive.draw() fn for details on how the drawMode works
+   *
+   * @param {number} x - the x coord
+   * @param {number} y - the y coord
+   * @param {number} width
+   * @param {number} height
+   * @param {string} drawMode - see ImageOlive.draw()
+   */
+  static getTopLeftCoords(x, y, width, height, drawMode){
+    if(drawMode === "center") drawMode = "center-center"
+    const [vertical, horizontal] = drawMode.split("-")
+
+    if(vertical === "bottom") y -= height
+    else if(vertical === "center") y -= height/2
+
+    if(horizontal === "right") x -= width
+    else if(horizontal === "center") x -= width/2
+
+    return [x, y]
+  }
+
 
   /**
   * runs the given function on each pixel, and converts the color of each pixel accordingly
@@ -163,6 +204,43 @@ class ImageOlive {
       }
     }
     return values
+  }
+
+
+  /**
+   * resize the image in the canvas
+   *
+   * does this by redrawing the image in the internal canvas so this is a heavy function regardless,
+   * of if its inplace or not,
+   * so be careful
+   *
+   * @param {number} width
+   * @param {number} height
+   * @param {bool} [inplace=false] - do it in the existing ImageOlive, or in a new ImageOlive
+   */
+  resize(width, height, inplace=false){
+    if(inplace){
+      this.width = this.canvas.width = width
+      this.height = this.canvas.height = height
+      this.ctx.drawImage(this.image, 0, 0, width, height)
+      this.imageData = this.ctx.getImageData(0, 0, this.width, this.height)
+    } else{
+      const imageOlive = new ImageOlive()
+      imageOlive.src = this.src
+      imageOlive.image = this.image
+      imageOlive.width = imageOlive.canvas.width = width
+      imageOlive.height = imageOlive.canvas.height = height
+      imageOlive.ctx.drawImage(imageOlive.image, 0, 0, width, height)
+      imageOlive.imageData = imageOlive.ctx.getImageData(0, 0, imageOlive.width, imageOlive.height)
+      return imageOlive
+    }
+  }
+
+  /**
+   * scale, resize the image by a factor
+   */
+  scale(wRatio, hRatio, inplace=false){
+    return this.resize(wRatio*this.width, hRatio*this.height, inplace)
   }
 }
 

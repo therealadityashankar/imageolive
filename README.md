@@ -13,8 +13,7 @@ import ImageOlive from "https://cdn.jsdelivr.net/gh/therealadityashankar/imageol
 
 async function dog(){
   const dogpic = await ImageOlive.create("./images/woofer.png", import.meta.url)
-  const canvas = document.getElementById("canvas")
-  dogpic.setOriginal(canvas)
+  dogpic.draw("#canvas-id", 0, 0)
 };
 
 dog()
