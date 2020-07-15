@@ -9,7 +9,7 @@ Then you've come to the right spot !
 ### short example
 
 ```js
-import ImageOlive from "https://cdn.jsdelivr.net/gh/therealadityashankar/imageolive@0.0.3/imageOlive.mjs";
+import ImageOlive from "https://cdn.jsdelivr.net/gh/therealadityashankar/imageolive@0.0.3/imageOlive.js";
 
 async function dog(){
   const dogpic = await ImageOlive.create("./images/woofer.png", import.meta.url)
