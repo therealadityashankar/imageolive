@@ -6,10 +6,14 @@
 
 Then you've come to the right spot !
 
+### note
+
+api is unstable
+
 ### short example
 
 ```js
-import ImageOlive from "https://cdn.jsdelivr.net/gh/therealadityashankar/imageolive@0.0.4/imageOlive.js";
+import ImageOlive from "https://cdn.jsdelivr.net/gh/therealadityashankar/imageolive@0.0.5/imageOlive.js";
 
 async function dog(){
   const dogpic = await ImageOlive.create("./images/woofer.png", import.meta.url)
