@@ -220,9 +220,9 @@ class ImageOlive {
    */
   resize(width, height, inplace=false){
     if(inplace){
-      this.ctx.drawImage(this.canvas, 0, 0, width, height)
       this.width = this.canvas.width = width
       this.height = this.canvas.height = height
+      this.ctx.drawImage(this.image, 0, 0, width, height)
       this.imageData = this.ctx.getImageData(0, 0, this.width, this.height)
     } else{
       const imageOlive = new ImageOlive()
