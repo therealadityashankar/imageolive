@@ -220,9 +220,9 @@ class ImageOlive {
    */
   resize(width, height, inplace=false){
     if(inplace){
+      this.ctx.drawImage(this.canvas, 0, 0, width, height)
       this.width = this.canvas.width = width
       this.height = this.canvas.height = height
-      this.ctx.drawImage(this.image, 0, 0, width, height)
       this.imageData = this.ctx.getImageData(0, 0, this.width, this.height)
     } else{
       const imageOlive = new ImageOlive()
@@ -241,6 +241,22 @@ class ImageOlive {
    */
   scale(wRatio, hRatio, inplace=false){
     return this.resize(wRatio*this.width, hRatio*this.height, inplace)
+  }
+
+  /**
+   * resize with a consistant aspect ratio
+   * i.e. does not skew the image to fit in the resized portion,
+   *
+   * see resize for parameter meanings
+   */
+  fit(width, height, inplace=false){
+    // calculate the ratio's if we decreased to the height
+    // and width while keeping the aspect ratio
+    const [wDecRatio, hDecRatio] = [this.width/width, this.height/height]
+
+    // take the smaller resulting photo
+    const ratio = Math.min(wDecRatio, hDecRatio)
+    return this.scale(ratio, ratio, inplace)
   }
 }
 
