@@ -220,10 +220,14 @@ class ImageOlive {
    */
   resize(width, height, inplace=false){
     if(inplace){
-      this.width = this.canvas.width = width
-      this.height = this.canvas.height = height
-      this.ctx.drawImage(this.image, 0, 0, width, height)
-      this.imageData = this.ctx.getImageData(0, 0, this.width, this.height)
+      const canvas = document.createElement("canvas")
+      const ctx = canvas.getContext("2d")
+      this.width = canvas.width = width
+      this.height = canvas.height = height
+      ctx.drawImage(this.image, 0, 0, width, height)
+      this.imageData = ctx.getImageData(0, 0, this.width, this.height)
+      this.canvas = canvas
+      this.ctx = ctx
     } else{
       const imageOlive = new ImageOlive()
       imageOlive.src = this.src
@@ -252,7 +256,7 @@ class ImageOlive {
   fit(width, height, inplace=false){
     // calculate the ratio's if we decreased to the height
     // and width while keeping the aspect ratio
-    const [wDecRatio, hDecRatio] = [this.width/width, this.height/height]
+    const [wDecRatio, hDecRatio] = [width/this.width, height/this.height]
 
     // take the smaller resulting photo
     const ratio = Math.min(wDecRatio, hDecRatio)
